@@ -19,6 +19,7 @@ macro(SEMMacroBuildCLI)
     INSTALL_RUNTIME_DESTINATION
     INSTALL_LIBRARY_DESTINATION
     INSTALL_ARCHIVE_DESTINATION
+    MODULE_ENTRY_POINT
     )
   set(multiValueArgs
     ADDITIONAL_SRCS
@@ -67,6 +68,10 @@ macro(SEMMacroBuildCLI)
     set(LOCAL_SEM_CLI_LIBRARY_WRAPPER_CXX ${SlicerExecutionModel_DEFAULT_CLI_LIBRARY_WRAPPER_CXX})
   else()
     set(LOCAL_SEM_CLI_LIBRARY_WRAPPER_CXX ${SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX})
+  endif()
+
+  if(NOT DEFINED LOCAL_SEM_MODULE_ENTRY_POINT)
+    set(LOCAL_SEM_MODULE_ENTRY_POINT ModuleEntryPoint)
   endif()
 
   foreach(v LOCAL_SEM_CLI_LIBRARY_WRAPPER_CXX)
@@ -124,7 +129,7 @@ macro(SEMMacroBuildCLI)
   endif()
 
   add_library(${CLP}Lib ${cli_library_type} ${${CLP}_SOURCE})
-  set_target_properties(${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint")
+  set_target_properties(${CLP}Lib PROPERTIES COMPILE_FLAGS "-Dmain=${LOCAL_SEM_MODULE_ENTRY_POINT}")
   if(NOT WIN32 AND NOT CYGWIN AND ${cli_library_type} STREQUAL "SHARED" AND ITK_BUILD_SHARED)
     include(GenerateExportHeader)
     # The generated export header is not used, but this call is required to
